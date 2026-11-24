@@ -25,6 +25,10 @@ def _who(mark: Mark) -> str:
     return mark.author or mark.email or "(unknown)"
 
 
+def _tag(mark: Mark) -> str:
+    return f"{mark.tag}({mark.owner})" if mark.owner else mark.tag
+
+
 def _shorten(text: str, limit: int = _MAX_TEXT) -> str:
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
 
@@ -54,7 +58,7 @@ def format_table(marks: Sequence[Mark], total: Sequence[Mark] | None = None) -> 
     if not marks:
         return summary(every, 0)
     header = ("AGE", "TAG", "AUTHOR", "LOCATION", "TEXT")
-    rows = [(human_age(m.age_days), m.tag, _who(m), m.location, _shorten(m.text)) for m in marks]
+    rows = [(human_age(m.age_days), _tag(m), _who(m), m.location, _shorten(m.text)) for m in marks]
     widths = [max(len(row[i]) for row in [header, *rows]) for i in range(len(header) - 1)]
 
     def render(row: Sequence[str]) -> str:
@@ -80,7 +84,7 @@ def format_markdown(marks: Sequence[Mark], total: Sequence[Mark] | None = None) 
     ]
     for m in marks:
         lines.append(
-            f"| {human_age(m.age_days)} | {m.tag} | {_md(_who(m))} "
+            f"| {human_age(m.age_days)} | {_md(_tag(m))} | {_md(_who(m))} "
             f"| {_md(m.location)} | {_md(m.text)} |"
         )
     return "\n".join([*lines, "", summary(every, len(marks))])

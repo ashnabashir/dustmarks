@@ -70,6 +70,13 @@ def test_markdown_escapes_special_characters() -> None:
     assert row == "| 13mo | TODO | Ada Lovelace | we\\|ird.py:10 | a \\| b \\`code\\` c\\\\d |"
 
 
+def test_owner_is_shown_next_to_the_tag() -> None:
+    table = format_table([make(owner="ada")])
+    assert table.splitlines()[1].split()[:2] == ["13mo", "TODO(ada)"]
+    row = format_markdown([make(owner="a|b")]).splitlines()[2]
+    assert row.startswith("| 13mo | TODO(a\\|b) | Ada Lovelace |")
+
+
 def test_summary_mentions_hidden_marks() -> None:
     every = [make(), make(line=11), make(line=12)]
     assert format_table(every[:1], every).endswith("Showing 1 of 3.")

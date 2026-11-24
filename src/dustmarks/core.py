@@ -45,15 +45,18 @@ def scan(
     tags: Sequence[str] = DEFAULT_TAGS,
     now: datetime | None = None,
 ) -> list[Mark]:
-    """Return every marker in the repository containing ``start``, oldest first.
+    """Return every marker in ``start`` and the folders below it, oldest first.
 
     ``pathspecs`` limit the scan the same way they limit ``git ls-files`` run
-    from ``start``. Raises :class:`dustmarks.GitError` outside a git repository.
+    from ``start``. A ``now`` without a timezone is taken as UTC. Raises
+    :class:`dustmarks.GitError` outside a git repository.
     """
     start_path = Path(start).resolve()
     root = repo_root(start_path)
     pattern = build_pattern(tags)
     now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
 
     pending: list[tuple[str, list[Found]]] = []
     for relative in list_files(start_path, pathspecs):

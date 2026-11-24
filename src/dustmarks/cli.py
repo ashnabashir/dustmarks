@@ -51,7 +51,9 @@ def build_parser() -> argparse.ArgumentParser:
         epilog="Exit codes: 0 success, 1 --fail-older-than matched, 2 usage or git error.",
     )
     parser.add_argument(
-        "paths", nargs="*", help="limit the scan to these files or folders (git pathspecs)"
+        "paths",
+        nargs="*",
+        help="files or folders to scan (git pathspecs; default: the current folder)",
     )
     parser.add_argument(
         "-C",
@@ -86,7 +88,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--fail-older-than",
         type=_days,
         metavar="DAYS",
-        help="exit with code 1 if any shown mark is older than DAYS (for CI)",
+        help="exit with code 1 if any matching mark is older than DAYS, even one hidden by -n",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return parser

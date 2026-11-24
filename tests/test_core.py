@@ -28,6 +28,13 @@ def test_attaches_author_and_age(repo: Repo) -> None:
     assert marks[1].owner == "grace"
 
 
+def test_naive_now_is_treated_as_utc(repo: Repo) -> None:
+    repo.write("a.py", "# TODO later\n")
+    repo.commit("first", "2025-12-31T00:00:00+00:00", author="Ada Lovelace")
+    [mark] = scan(repo.path, now=datetime(2026, 1, 1))
+    assert mark.age_days == 1
+
+
 def test_blames_the_line_that_added_the_marker(repo: Repo) -> None:
     repo.write("a.py", "x = 1\n")
     repo.commit("old", "2020-01-01T00:00:00+00:00", author="Ada Lovelace")

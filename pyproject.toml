@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "dustmarks"
 version = "0.1.0"
-description = "Find TODO, FIXME and HACK comments in a git repo and see how long each has waited."
+description = "Find the TODO and FIXME comments in your code and see how long each has waited."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }

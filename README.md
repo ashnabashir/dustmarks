@@ -8,13 +8,16 @@
 `FIXME`, `HACK` and `XXX` comment in a git repository, uses `git blame` to show
 who wrote each one and how long ago, and puts the oldest first.
 
+Run it from the root of a repository to scan all of it, or from a subfolder
+to scan just that part.
+
 ```console
 $ dustmarks
-AGE    TAG    AUTHOR         LOCATION                  TEXT
-4y     TODO   Ada Lovelace   src/billing/invoice.py:2  handle refunds in other currencies
-13mo   FIXME  Grace Hopper   web/api/client.ts:2       retry on 503 instead of failing
-21d    HACK   Linus Ito      scripts/deploy.sh:2       remove after the new runner ships
-today  TODO   (uncommitted)  src/app.py:2              add --dry-run
+AGE    TAG         AUTHOR         LOCATION                  TEXT
+4y     TODO        Ada Lovelace   src/billing/invoice.py:2  handle refunds in other currencies
+13mo   FIXME(ops)  Grace Hopper   web/api/client.ts:2       retry on 503 instead of failing
+21d    HACK        Linus Ito      scripts/deploy.sh:2       remove after the new runner ships
+today  TODO        (uncommitted)  src/app.py:2              add --dry-run
 
 4 marks in 4 files (1 FIXME, 1 HACK, 2 TODO). Oldest: 4y at src/billing/invoice.py:2.
 ```
@@ -33,7 +36,7 @@ going stale with a CI check.
   comments that merely mention a TODO are ignored.
 - Shows the author, date and commit of the line that added each marker,
   including edits you haven't committed yet.
-- Understands owners: `TODO(ada): ...`.
+- Understands owners: `TODO(ada): ...` is listed as `TODO(ada)`.
 - Respects `.gitignore` and skips binary and very large files.
 - Output as a table, Markdown (for issues and PR comments) or JSON.
 - `--fail-older-than DAYS` for CI. No dependencies beyond Python and git.
@@ -49,7 +52,7 @@ pip install git+https://github.com/ashnabashir/dustmarks.git
 ## Usage
 
 ```bash
-dustmarks                          # the whole repository, oldest first
+dustmarks                          # this folder and everything below it, oldest first
 dustmarks src tests                # only these folders
 dustmarks --older-than 365         # markers more than a year old
 dustmarks --author grace           # markers written by a matching author or email
@@ -71,7 +74,7 @@ dustmarks -C ~/code/other-project  # scan another repository
 Fail the build when a marker has waited more than 180 days:
 
 ```yaml
-- uses: actions/checkout@v5
+- uses: actions/checkout@v7
   with:
     fetch-depth: 0 # full history so ages are accurate
 - run: pip install git+https://github.com/ashnabashir/dustmarks.git
